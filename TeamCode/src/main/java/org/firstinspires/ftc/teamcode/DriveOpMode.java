@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //@Disabled
 public class DriveOpMode extends LinearOpMode {
 
-    // Declare OpMode members for each of the 4 motors.
+    // Designate OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftDrive = null;
     private DcMotor backLeftDrive = null;
