@@ -95,15 +95,18 @@ public class MecanumDrive extends Subsystem {
         this.axial   = axial;
         this.lateral =  lateral;
         this.yaw     =  yaw;
-
     }
 
     public void toggleMode(){
         this.slowmode = !slowmode;
     }
+
     @Override
     public void writeTelemetry(Telemetry telemetry) {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftDrive.getPower(), frontRightDrive.getPower());
+        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftDrive.getPower(), backRightDrive.getPower());
+        telemetry.addData("SlowMode", slowmode ? "On":"Off");
     }
 }

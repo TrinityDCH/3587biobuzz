@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.common.Robot;
 
+@TeleOp(name="TestDriveOpMode", group="Linear OpMode")
 public class TestDriveOpMode extends LinearOpMode {
 
     public Robot robot;
@@ -26,6 +31,11 @@ public class TestDriveOpMode extends LinearOpMode {
             if (gamepad1.aWasPressed()){
                 robot.drive.toggleMode();
             }
+            if(gamepad1.b){
+                // You could use readings from April Tags here to give a new known position to the pinpoint
+                robot.pinpoint.pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
+            }
+
 
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
