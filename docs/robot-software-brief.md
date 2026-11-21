@@ -1,8 +1,6 @@
 # 3587 Scrimmage Work Plan
 
-December 12 is the scrimmage. The robot is not here this week. This page is what to write now, so that the week the robot arrives is mostly testing and filling in real numbers.
-
-The hardware walkthrough from November 21 is the robot. Some names already in the code are from an older sketch. When a name and the robot disagree, the robot wins. Ask a mentor before you delete an old name.
+December 12 is likely the scrimmage. The robot is not here this week. This page is what to write now, so that the week the robot arrives is mostly testing and filling in real numbers.
 
 ## What you are finishing this week
 
@@ -168,9 +166,9 @@ The camera code is already in `TurretCamera`. Two cleanups make robot day faster
 
 **Done when** those two are true and the project builds. If the webcam is on the bench, try it. If the webcam is on the robot, this step is still done when it builds. Checking the picture waits for the camera.
 
-### 10. Pedro leave-and-park, if a mentor is with you for the branch
+### 10. Pedro leave-and-park
 
-Pedro is on the `Pedropathing` branch. The hive camera is on `master`. Do not merge them by yourself.
+Pedro is on the `Pedropathing` branch. The hive camera is on `master`. 
 
 What you can write this week is the auto program: three poses, named start, leave, and park. Ask a coach for those spots on the field map. Until you have the numbers, the constants stay 0 with a comment. No shooting in auto.
 
@@ -193,15 +191,3 @@ Do this in order. Each line is a measurement or a direction fix, typed into a co
 ## Not this week
 
 Field-centric drive, the flower arm, color sensors, ball counting, the Limelight, and a second turret that aims itself. Drivers count balls out loud and stop at 4. Do not shoot nectar into flowers until the last minute of a match.
-
-## For mentors
-
-Students can stop here.
-
-- This week's bar is a green build plus named constants, not a moving robot. Robot day is the checklist above.
-- `TestDriveOpMode` (`MainTeleOp`) constructs `Robot`. New subsystems stay out of `Robot` until the full config exists, or drive init will throw.
-- `MecanumDrive` ignores the Pinpoint it is given. Pose reset on B is level-triggered. `writeTelemetry` calls `telemetry.update()` and splits the driver-station packet. `DriveOpMode` is also enabled.
-- Pinpoint offsets `-84, -168` mm are the SDK sample (`SensorGoBildaPinpoint`), not this robot.
-- `origin/Pedropathing` does not contain the hive camera, and `pedro/Constants.create` returns null. Rebase onto `master`. Do not merge it over `TurretCamera`.
-- `Baskspin.java` is a misspelled backspin motor this robot does not have.
-- Hardware that is still unknown, and only blocks the matching checklist line: color-sensor placement, turret range and feedback wires, shooter ticks per rev, Pinpoint version, and the real wiring map.
