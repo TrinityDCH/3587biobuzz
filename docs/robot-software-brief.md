@@ -1,214 +1,207 @@
 # 3587 Scrimmage Work Plan
 
-December 12 is the scrimmage. The full robot may only be here for about a week before that. This page is the work, in order. Finish a step before you start the next one.
+December 12 is the scrimmage. The robot is not here this week. This page is what to write now, so that the week the robot arrives is mostly testing and filling in real numbers.
 
-The hardware walkthrough from November 21 is the robot you are programming. Some names already in the code are from an older sketch. When a name and the robot disagree, the robot wins. Ask a mentor before you delete old names.
+The hardware walkthrough from November 21 is the robot. Some names already in the code are from an older sketch. When a name and the robot disagree, the robot wins. Ask a mentor before you delete an old name.
+
+## What you are finishing this week
+
+By the end of this week, with no robot:
+
+- The project builds.
+- `HardwareNames` uses the real device names.
+- Intake, transfer, shooter, and turret each have a class and a test program.
+- One scrimmage TeleOp calls those classes from a button map you wrote down.
+- Every number that needs the robot is a named constant, left safe (motors at 0, no servo move on init).
+- You have a short checklist for the first hours with the robot.
+
+You will not yet know motor directions, shooter speeds, hood angles, turret limits, or the Pinpoint offsets. That is expected. Those are measurements. The programs that will hold them should already exist.
 
 ## What "working" means on December 12
 
-A working robot can do four things:
-
-1. A driver can drive it for a whole match.
-2. It can pick balls up and move them to a shooter.
+1. A driver can drive for a whole match.
+2. The robot can pick balls up and move them to a shooter.
 3. At least one shooter can score, with a person aiming.
-4. In auto, it leaves the start and parks.
+4. In auto, the robot leaves the start and parks.
 
-Leave-and-park is the right auto. Do not build a scoring auto for this scrimmage.
-
-You are done with the scrimmage list when those four things work twice in a row. Practice driving that robot. Extra ideas are at the bottom, and they wait until the four things work.
+Leave-and-park is the right auto. A scoring auto is later. One good shooter is enough if the second one is not ready.
 
 ## Words
 
-- **Teleop.** The part of the match where a driver drives. Two minutes.
-- **Auto.** The first 30 seconds. The robot runs a program by itself.
-- **OpMode.** One program in the list on the driver station.
-- **Config.** The list of device names on the driver station. The name in the config and the name in `HardwareNames` have to be the same, or the program crashes when you press init.
-- **Subsystem.** One job on the robot, in its own class, with its own test OpMode. The intake is one. A shooter is one.
-- **Servo.** Moves to a position you choose and holds there. Hoods, gates, turrets, and the flower arm are servos.
-- **Encoder.** A counter on a motor. Shooter speed control needs it. The intake and transfer cables are not plugged in yet.
+- **Teleop.** The driver-controlled part of the match.
+- **Auto.** The first 30 seconds, when the robot runs alone.
+- **OpMode.** One program in the driver station list.
+- **Config.** The device names on the driver station. They must match `HardwareNames`, or init crashes. You will type the config on robot day. This week you only type the names in code.
+- **Subsystem.** One job, in its own class, with its own test OpMode.
+- **Build.** Android Studio compiles the project. A green build is how you finish a step this week. You cannot press init on the new programs until the robot is connected.
 
 ## The robot, one job at a time
 
-Balls go in the intake, ride the transfer, and the ramp legs sort them. Nectar goes to the front shooter. Pollen goes to the back shooter. No code chooses which shooter gets the ball. Each shooter has a flywheel motor, a hood servo, a gate servo, and a turret servo. The gate is the door. Closed holds the ball. Open lets one ball through. The transfer can keep running while a gate is closed.
+Balls go in the intake, ride the transfer, and the ramp legs sort them. Nectar goes to the front shooter. Pollen goes to the back shooter. No code chooses the shooter. Each shooter has a flywheel, a hood, a gate, and a turret. The gate is the door: closed holds the ball, open lets one through. The transfer can keep running while a gate is closed.
 
-| Job | What it is | Where you are |
+| Job | This week you write | On the robot you measure |
 | --- | --- | --- |
-| Drive | 4 mecanum motors | Started. Program name on the driver station: **TestDriveOpMode** |
-| Pinpoint | Tells you where the robot is and which way it faces | Started. The offset numbers in the file are from an example robot, not ours |
-| Hive camera | Looks up at the hive and says which cell is up | Started. More work left. A driver button is the backup |
-| Pedro | Drives a path by itself | Started, on the Pedro branch. Scrimmage goal is leave and park |
-| Intake | 1 motor. In, out, stop | Not started |
-| Transfer | 1 motor. In, out, stop. Feeds both shooters | Not started |
-| Pollen shooter | Back shooter. Motor, hood, gate, turret | Not started. Build this shooter first |
-| Nectar shooter | Front shooter. Same four parts | After pollen can score |
-| Flower arm | 1 servo. Stow, hover, down | The arm is not built yet. Code waits |
+| Drive | Already started. Leave it working. Program name: **TestDriveOpMode** | Which way is forward on the new frame |
+| Pinpoint | Leave the example offsets alone, and label them as the example | The real pod offsets |
+| Hive camera | Already started. Clean up the test if you finish the list below | Does it hold the right cell |
+| Intake | Class + test. In, out, stop | Power and direction |
+| Transfer | Same pattern as intake | Power and direction |
+| Pollen shooter | Flywheel, hood, and gate in one `Shooter` class | Ticks per rev, one speed, one hood angle, gate positions |
+| Nectar shooter | A second `Shooter`, same class, its own constants | Its own numbers. Nectar is a different size |
+| Both turrets | One `Turret` class, two of them | Safe range. Do this before you trust a turret |
+| Pedro | The leave-and-park program, with the poses left blank | Does the path actually park |
+| Flower arm, color sensors, Limelight | Leave them | Later |
 
-Two color sensors sit on the transfer. For this scrimmage, drivers count balls out loud and stop at 4. Sensor code waits until a shooter can score.
+Put the flywheel, the hood, and the gate in `Shooter`. Make two Shooters. Keep `Turret` as its own class. Leave `Hood.java` empty if the hood lives in `Shooter`. Leave `Baskspin.java` alone. This robot has no backspin motor.
 
-The Limelight looks down at balls. It also waits.
+## Rules for every class you write this week
 
-## How you build each new piece
+1. Add the name to `HardwareNames` first. Use the names in the table below.
+2. Nothing moves unless a button is held. Init does not start a motor or move a servo. The first time this runs on the real robot, a surprise move can hit a stop.
+3. Motor power starts at 0. You will raise it on robot day.
+4. A number you do not know yet gets a name in the constants file and a comment: `measure on robot day`. Do not invent a speed or an angle.
+5. The test OpMode creates only the device it tests. Do not add intake, transfer, shooter, or turret into `Robot` this week. `TestDriveOpMode` builds `Robot` today. If `Robot` starts requiring devices that are not wired, the drive program will crash on init.
+6. Build after each step. Read the error. Fix that step before you start the next one.
+7. Intake and transfer do not have encoder cables. Leave them in the normal power mode. "Run using encoder" with no cable can send a motor to full power. Ask before you change a motor mode.
 
-Every new device goes through the same four steps. Learn this once.
-
-1. Put it in the driver station config and in `HardwareNames`, with the same name.
-2. Make a test OpMode that runs only that device. The empty files `IntakeTest`, `ShooterTest`, and `TurretZeroTest` are there for this.
-3. Drive it from the gamepad until it does the job.
-4. Only then add it to the match OpMode. One person adds things to `Robot`. Everyone else stays in a test OpMode.
-
-Use **Test Hardware** in the Utility menu on the day a wire is new. It moves one device at a time. Let go if a servo buzzes or anything hits a stop. Buzzing means it is pushing against metal.
-
-Shooter motors use the encoder. Intake and transfer do not have encoder cables yet. Leave those two in the normal power mode. Turning on "run using encoder" with no cable can send a motor to full power. Ask before you change a motor mode.
-
-## Names to use
-
-Use these so the config, the code, and the conversation match.
+## Names
 
 | Device | Name |
 | --- | --- |
 | Drive motors | `fl` `bl` `fr` `br` |
 | Pinpoint | `pin` |
-| Intake motor | `intake` |
-| Transfer motor | `transfer` |
+| Intake | `intake` |
+| Transfer | `transfer` |
 | Pollen flywheel, hood, gate, turret | `pollen_flywheel` `pollen_hood` `pollen_gate` `pollen_turret` |
 | Nectar flywheel, hood, gate, turret | `nectar_flywheel` `nectar_hood` `nectar_gate` `nectar_turret` |
-| Flower arm | `flower` |
+| Flower arm, later | `flower` |
 | Hive webcam | `hive_camera` |
-| Limelight | `limelight` |
+| Limelight, later | `limelight` |
 
-`traction`, `backspin`, and `intake_deploy` are from the old sketch. Do not wire a device to those names. The single names `flywheel`, `hood`, and `turret` are the same idea: this robot has two of each. Color-sensor names wait until you can see where the sensors sit.
+`traction`, `backspin`, and `intake_deploy` are old sketch names. Do not use them for a new device. `flywheel`, `hood`, and `turret` as single names are the same problem: this robot has two of each.
 
-## This week, before the rest of the robot is here
+## This week, in order
 
-You already have a drive, a Pinpoint, and a hive camera. Two people can split steps 3 and 4. Steps 1 and 2 come first.
+### 1. Write the button map on paper first
 
-### 1. Drive
+List every action. Then pick the button. Do not start coding the gamepad until this list exists. Pollen only, one driver, is enough for the first map. Nectar can wait on a "which shooter" choice if you run out of buttons.
 
-Use TestDriveOpMode. There is a second drive program called DriveOpMode. Ignore it, and ask a mentor to hide it so nobody inits the wrong one.
+Actions that need a control:
 
-**Done when** a driver can go forward, back, strafe, and turn, and can say which stick does which. If the robot keeps rolling after the sticks come back, ask about brake mode.
+- Drive. Already left stick to move, right stick to turn.
+- Intake in, intake out, intake stop.
+- Transfer in, transfer out, transfer stop.
+- Pollen flywheel on, pollen flywheel off.
+- Pollen hood: nudge one way, nudge the other way.
+- Pollen gate: hold to open, release to close.
+- Pollen turret: nudge one way, nudge the other way.
+- Reset the Pinpoint pose. Already the B button in TestDriveOpMode.
+- Pick the hive cell, as a backup for the camera.
 
-### 2. Pinpoint
+**Done when** the map is written down and you can say it without looking at the code.
 
-Push the robot by hand. Forward should change one number. Strafing should change the other. Turning should change the heading. The B button sets the position back to zero.
+### 2. Put the names in `HardwareNames`
 
-**Done when** those three pushes do what you expect, and you have written down that the offset numbers still belong to the example robot. Measuring our offsets is step 7. Do not tune shots or paths on the example numbers.
+Add the new names. Keep `fl`, `bl`, `fr`, `br`, `pin`, and `hive_camera`.
 
-### 3. Hive camera
+**Done when** the project builds.
 
-The camera looks up. Each hive cell has a group of AprilTags. The code already ignores a cell that is tipped over, ignores the other alliance, and waits until it sees the same cell a few times.
+### 3. Intake
 
-**Done when** you can tell it which alliance you are on, point it at the hive, and it reports one cell and keeps that answer. Write down what it does when the light is bad or the hive is moving. The scrimmage plan still has a driver button to pick the cell. The camera helps. It does not have to be perfect, and it does not block the shooter work. Keep one person on this in the background.
+Fill in `Intake.java` and `IntakeTest`. Three commands: in, out, stop. Power comes from `IntakeConstants`.
 
-### 4. Pedro, leave and park
+**Done when** it builds, the test uses the buttons from your map, and init does not turn the motor on.
 
-Pedro is how auto will drive. It is started on the Pedro branch. The hive camera work is on `master`. Ask a mentor before you merge the two. A bad merge can wipe the camera code.
+### 4. Transfer
 
-On the drive you have now:
+Add `Transfer.java` the same way. One belt feeds both shooters. The gates, not this motor, choose which shooter gets a ball.
 
-1. Get Pedro running and follow one straight line.
-2. Add a turn.
-3. Write one auto that leaves the starting line and ends in the parking spot your coaches show you.
+**Done when** it builds, and you can point at the difference between this class and intake (the name, and the job). The code shape should look the same.
 
-**Done when** that path finishes near the right place two times in a row. No shooting in auto.
+### 5. Shooter
 
-## The week the robot is on the table
+Fill in `Shooter.java`, `ShooterConstants.java`, and `ShooterTest`. One class. Two sets of constants, pollen and nectar. Wire the pollen test first, then the nectar test as the same buttons with the nectar constants.
 
-Same order. Do not start the shooter because the shooter is more interesting. A shooter with no intake is a demo. A robot that can drive, pick up, and shoot is the scrimmage.
+The test needs three behaviors:
 
-### 5. Name every wire
+- Flywheel on and off. The speed constant is a stand-in until robot day. Also add a constant for ticks per revolution, comment `read the sticker on the motor`, and leave the number unset.
+- Hood nudge. Store the position in a variable that starts wherever the servo already is. Do not send it to 0 or 1 on init.
+- Gate closed unless the open button is held. Add constants for the closed position and the open position, unset until robot day.
 
-Put each motor, servo, and sensor in the config with the names above. Test Hardware on each one. Write down which way is forward.
+**Done when** both tests build, pollen and nectar are two objects of the same class, and you can explain which constant you will change when a shot goes too short.
 
-**Done when** every device moves or reads, and a servo has never been driven into a stop.
+### 6. Turret
 
-### 6. Drive on the real frame
+Fill in `Turret.java`, `TurretConstants.java`, and `TurretZeroTest`. One class, two objects.
 
-Directions can flip when the motors move to the new robot. Fix them in the drive code, then drive slowly around the field.
+The test nudges the position a small step while a button is held. Add `min` and `max` constants, unset for now, and write the code so a nudge cannot go past them once those numbers exist. Init commands nothing.
 
-**Done when** a driver can take it around the field without a mentor on the sticks.
+**Done when** it builds, and you can explain why init must not move the turret: on the real robot it can drive into a stop.
 
-### 7. Measure the Pinpoint, then park
+### 7. Scrimmage TeleOp
 
-The odometry pods are in a new place, so the example offsets are wrong on this frame. Use the Pinpoint tuner in Pedro. Check which way each pod counts by pushing the robot.
+Make a new TeleOp for the match. Leave `TestDriveOpMode` as the drive-only program. The new one uses your button map and creates intake, transfer, the pollen shooter, and the pollen turret. Include nectar in the file only if the button map has a place for it.
 
-**Done when** a leave-and-park auto works on the field twice in a row. That finishes auto for the scrimmage.
+**Done when** it builds, every button from the paper map appears in this file, and `TestDriveOpMode` was not changed to require the new devices.
 
-### 8. Intake
+### 8. Shot sequence, in the shooter test only
 
-Test OpMode first. One button in, one button out, one button stop. Out is how you clear a jam.
+After the shooter test builds, add the six steps as named states. This is how one button will eventually shoot a ball. The match program can keep using the hand controls until this has been tried on the robot.
 
-**Done when** it takes balls in and can spit a jammed ball back out.
+1. **Idle.** Wheel off or slow. Gate closed.
+2. **Spin up.** Wheel to the speed constant. Hood at the saved position.
+3. **Aim.** Turret to the angle you asked for.
+4. **Ready.** Speed has stayed near the target for a short time, and the turret has stopped moving.
+5. **Feed.** Gate opens for one ball.
+6. **Recover.** Wait until the speed is back, then Ready if more balls are waiting, otherwise Idle.
 
-### 9. Transfer
+The "near the target" amount is a constant you will set on the robot. Until then, Ready can stay false, or it can become true when you press a test button. Write which one you chose in a comment.
 
-Same three buttons. This one belt feeds both shooters. The gates decide which shooter receives a ball.
+**Done when** you can walk someone through the six names and say what each one is waiting for.
 
-**Done when** balls move to the shooter, and reverse brings them back.
+### 9. Hive camera, if the list above already builds
 
-### 10. Pollen shooter, by hand
+The camera code is already in `TurretCamera`. Two cleanups make robot day faster:
 
-Rear shooter. Pollen first, because the field has many more pollen balls than nectar. Three parts, in this order, in `ShooterTest`:
+- `HiveAimTest` should be able to start with only the camera in the config. Today it builds a full `Robot`, so it also demands the drive and the Pinpoint.
+- The alliance should be a choice you can change, not a red alliance fixed in the test.
 
-1. **Flywheel.** Read the sticker on the motor and write down the ticks per revolution. You need that number before speed control means anything. Find one speed that launches a pollen ball.
-2. **Hood.** Find one angle that makes that shot go in. Write the number down.
-3. **Gate.** The program starts with the gate closed. Open it only after the wheel is already up to speed. One open lets one ball through.
+**Done when** those two are true and the project builds. If the webcam is on the bench, try it. If the webcam is on the robot, this step is still done when it builds. Checking the picture waits for the camera.
 
-Aim by hand for this step. A person can point the robot, or point the turret once step 11 is safe.
+### 10. Pedro leave-and-park, if a mentor is with you for the branch
 
-**Done when** you can score a pollen ball from one marked spot on the field, several times.
+Pedro is on the `Pedropathing` branch. The hive camera is on `master`. Do not merge them by yourself.
 
-### 11. Pollen turret
+What you can write this week is the auto program: three poses, named start, leave, and park. Ask a coach for those spots on the field map. Until you have the numbers, the constants stay 0 with a comment. No shooting in auto.
 
-Do this before you trust the turret in a match.
+**Done when** the auto program builds on the branch your mentor pointed you at, and the three poses are named. Proving that it parks is robot day.
 
-1. Find the gear ratio from the servo to the turret, if there is one.
-2. Move the servo a small step at a time. Write down where it hits a stop or pulls a wire. Stay away from that point.
-3. If the extra feedback wire is plugged into an analog port, write down the voltage at each end of the safe range. That reading can tell you the angle later without a homing sweep.
-4. When the program starts, command the turret to stay where it already is. A turret that snaps to the middle on init will hit something.
+## Robot day checklist
 
-**Done when** the driver can aim it inside the safe range, and it has not hit a stop. Write the range in `TurretConstants`.
+Do this in order. Each line is a measurement or a direction fix, typed into a constant you already made. Stop on a line if the device hits something or a servo starts buzzing. Buzzing means it is pushing against metal.
 
-### 12. One match program
+1. Type the config with the same names as `HardwareNames`. Use Test Hardware, one device at a time.
+2. Drive in TestDriveOpMode. Fix directions. A driver can take it around the field.
+3. Intake test: set the power, fix the direction, in and out.
+4. Transfer test: same.
+5. Read the pollen motor sticker. Fill in ticks per revolution. Find one speed and one hood position that score a pollen ball from one spot. Fill in the gate positions. Gate stays closed until the wheel is already up to speed.
+6. Pollen turret: nudge until you are near a stop, back off, write min and max. Do not drive into the stop.
+7. Only then run the scrimmage TeleOp and practice pickup plus one shot.
+8. Push the robot and fix the Pinpoint offsets with the Pedro tuner. Then run leave-and-park twice.
+9. Repeat the shooter and turret numbers for nectar. If time runs out, the scrimmage robot is pollen only.
 
-Put drive, intake, transfer, and the pollen shooter into one TeleOp. This is the program you will drive at the scrimmage if time runs out.
+## Not this week
 
-**Done when** one driver can pick up balls and score them with pollen, with no test OpModes open. Then practice.
-
-### 13. Nectar shooter
-
-Front shooter. Same pieces: flywheel, hood, gate, turret. Nectar is a different size, so the hood number and the wheel speed will be different. Test them. Do not copy the pollen numbers and stop.
-
-**Done when** it scores from one spot, or the team decides pollen-only for the scrimmage. One good shooter is a working robot. A second turret that is not ready stays off the match program.
-
-## Rules to follow while you drive, even before there is code for them
-
-- Hold at most 4 balls, pollen and nectar together. Count out loud.
-- Do not shoot nectar into flowers until the last minute of the match. If you are not sure, don't.
-- Turrets, hoods, and the flower arm need metal stops. A limit in the code is not enough to keep the robot inside the starting size.
-
-## If the four scrimmage goals already work
-
-Only then, and in this order:
-
-1. **Field-centric drive.** The robot drives the same direction no matter which way it is facing, using the Pinpoint heading. The drive you have now does not do this yet.
-2. **Second turret**, with a written rule for angles they are not both allowed to use, so they cannot hit each other.
-3. **A shot sequence** on one shooter: spin up, aim, wait until the speed holds steady, open the gate for one ball, wait for the speed to come back, repeat. Spin the two flywheels up one at a time so the battery does not sag as hard.
-4. **Flower arm**, after a builder says the wedge is actually done. Three positions: stow, hover, down. Check that stow fits in the 18 inch starting box.
-5. **Color sensors.** First print "ball" or "no ball" from each sensor. Look at where they sit relative to the ramp legs before you try to count. Counting and "what color is this ball" come after that printout looks right with 1, 2, 3, and 4 real balls.
-6. **Limelight**, to find balls on the floor.
-
-Shot presets for lots of field spots, and 16 makes out of 20 shots, are the tuning project after one spot already scores. They are not the scrimmage gate.
+Field-centric drive, the flower arm, color sensors, ball counting, the Limelight, and a second turret that aims itself. Drivers count balls out loud and stop at 4. Do not shoot nectar into flowers until the last minute of a match.
 
 ## For mentors
 
-Students can stop reading here.
+Students can stop here.
 
-- Hardware source of truth is the November 21 walkthrough: 8 motors, 7 servos, pollen rear, nectar front, geared counter rollers, flower arm unfinished. `master` at `781ce24` is still the single-shooter sketch plus a working robot-centric drive, Pinpoint, and `TurretCamera`.
-- `MecanumDrive` never uses the Pinpoint it is given. Gamepad B zeros the pose on every loop while held. `writeTelemetry` calls `telemetry.update()` and splits the driver-station packet. `DriveOpMode` is also enabled.
-- Pinpoint offsets `-84, -168` mm and the 4-bar pod setting are copied from the SDK sample `SensorGoBildaPinpoint`.
-- `origin/Pedropathing` is one commit past the skeleton and does not contain the hive camera. `pedro/Constants.create` returns null. Rebase onto `master` after offsets are measured. Do not merge it over the camera work.
-- `HiveAimTest` builds a full `Robot`, so init requires the drive and the Pinpoint, and it locks the alliance to red. `TurretCamera` itself fails soft if `hive_camera` is missing.
-- `Baskspin.java` is a typo for a backspin motor this robot does not have. Do not let anyone implement it.
-- Open on the real robot, and blocking only the steps named above: color-sensor placement, turret range and feedback wires, whether the turrets overlap, shooter motor ticks per rev, Pinpoint version, and the wiring map. The port numbers in `MecanumDrive` are comments.
-- Pollen-only, driver-aimed, with leave-and-park, meets the scrimmage bar if step 13 does not land.
+- This week's bar is a green build plus named constants, not a moving robot. Robot day is the checklist above.
+- `TestDriveOpMode` (`MainTeleOp`) constructs `Robot`. New subsystems stay out of `Robot` until the full config exists, or drive init will throw.
+- `MecanumDrive` ignores the Pinpoint it is given. Pose reset on B is level-triggered. `writeTelemetry` calls `telemetry.update()` and splits the driver-station packet. `DriveOpMode` is also enabled.
+- Pinpoint offsets `-84, -168` mm are the SDK sample (`SensorGoBildaPinpoint`), not this robot.
+- `origin/Pedropathing` does not contain the hive camera, and `pedro/Constants.create` returns null. Rebase onto `master`. Do not merge it over `TurretCamera`.
+- `Baskspin.java` is a misspelled backspin motor this robot does not have.
+- Hardware that is still unknown, and only blocks the matching checklist line: color-sensor placement, turret range and feedback wires, shooter ticks per rev, Pinpoint version, and the real wiring map.
